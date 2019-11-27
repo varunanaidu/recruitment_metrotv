@@ -1,0 +1,209 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Applicant_bak extends SITE_Controller {
+
+	function __construct(){
+		parent::__construct();	
+		
+		if (! $this->hasLogin()) {
+			redirect('/');
+		}
+		
+		# main css additional
+		array_push(
+			$this->fc['files']['css'],
+			base_url('media/backend/plugins/bootstrap-select/css/bootstrap-select.min.css'),
+			base_url('media/backend/plugins/dropzone/dropzone.css'),
+			base_url('media/plugins/select2-4.0.3/dist/css/select2.min.css')
+		);
+		
+		# main js additional
+		array_push(
+			$this->fc['files']['js'],
+			base_url('media/backend/plugins/jquery-steps/jquery.steps.js'),
+			base_url('media/backend/plugins/bootstrap-select/js/bootstrap-select.min.js'),
+			base_url('media/backend/plugins/dropzone/dropzone.js'),
+			base_url('media/backend/plugins/jquery-inputmask/jquery.inputmask.bundle.js'),
+			base_url('media/plugins/select2-4.0.3/dist/js/select2.full.min.js')
+		);
+		
+		# custom js additional
+		array_push(
+			$this->fc['files']['js_custom'],
+			base_url('media/site/js/fc_applicant_bak.js')
+		);
+	}
+	
+	function index() {
+		
+		# url encoded
+		// $data['url_encoded'] = $this->input->get('ap');
+		$data['list_univ'] = $this->sitemodel->view('tab_university', '*');
+		
+		# load data applicant
+		$data['applicant_data'] = $this->sitemodel->view('tab_candidat', '*', ['candidat_id' => $this->log_user]);
+		
+		$data['page'] = 'applicant_data_bak';
+		$this->load->view('site/front/main-site', $data + $this->fc);
+	}
+	
+	function application_form() {
+		
+		// echo '<pre>';
+		// print_r($_POST);
+		// echo '</pre>';
+		// die();
+		
+		$msg['type'] = 'failed';		
+		$this->load->library('form_validation');
+		
+		# step 1
+		$this->form_validation->set_rules('f1_name','Name','trim|required');
+		$this->form_validation->set_rules('f1_idno','ID Number','trim|required');
+		$this->form_validation->set_rules('f1_pob','Place of Birth','trim|required');
+		$this->form_validation->set_rules('f1_dob','Date of Birth','trim|required|callback_isValidDate_check');
+		$this->form_validation->set_rules('f1_gender','Gender','required');
+		$this->form_validation->set_rules('f1_nat','Nationality','required');
+		$this->form_validation->set_rules('f1_blood','Blood Type','required');
+		$this->form_validation->set_rules('f1_religi','Religion','required');
+		$this->form_validation->set_rules('f1_height','Height','trim|numeric|required');
+		$this->form_validation->set_rules('f1_weight','Weight','trim|numeric|required');
+		
+		
+		
+		# step x
+		// $this->form_validation->set_rules('acceptTerms','Terms','required');
+		
+		if ($this->form_validation->run() == false) {
+			$msg['msg'] = validation_errors();
+			echo json_encode($msg);
+			return;
+		}
+		
+		$applicant_data = [
+			'candidat_name' 		=> $this->input->post('f1_name'),
+			'id_number'				=> $this->input->post('f1_idno'),
+			'pob'					=> $this->input->post('f1_pob'),
+			'dob'					=> date('Y-m-d',strtotime($this->input->post('f1_dob'))),
+			'gender'				=> $this->input->post('f1_gender'),
+			'nationality'			=> $this->input->post('f1_nat'),
+			'blood_id'				=> $this->input->post('f1_blood'),
+			'religion_id'			=> $this->input->post('f1_religi'),
+			'height'				=> $this->input->post('f1_height'),
+			'weight'				=> $this->input->post('f1_weight')
+		];
+		
+		# begin transaction
+		$this->db->trans_start();
+		$this->sitemodel->update('tab_candidat', $applicant_data, ['candidat_id' => $this->log_user]);
+		// insert or update to other table (family, education, etc)
+		$this->db->trans_complete();
+		
+		if ($this->db->trans_status() === FALSE)
+		{
+			// generate an error... or use the log_message() function to log your error
+			$msg['msg'] = "Failed input data. Try again !";
+			echo json_encode($msg);
+			return;
+		}
+		
+		# check if url_encoded exists 
+		// $url_encoded = $this->input->post('url_encoded');
+		// $msg['url_encoded'] = ($url_encoded != '') ? $url_encoded : '';
+		$msg['url_encoded'] = $this->session->userdata('referred_to') ? $this->session->userdata('referred_to') : '';
+		
+		$msg['type'] = 'done';
+		echo json_encode($msg);
+	}
+	
+	# custom callback function for form validation
+	public function isValidDate_check($str) {
+		
+		// $d = DateTime::createFromFormat('Y-m-d', $date);
+		// return $d && $d->format('Y-m-d') === $date;
+		list($d, $m, $y) = explode('-', $str);		
+		if (checkdate($m, $d, $y)) {
+			return TRUE;
+		}
+		else {
+			$this->form_validation->set_message('isValidDate_check', 'The {field} field must be a valid date');
+			return FALSE;
+		}
+	}
+		
+	##
+	## MUST ADD FILE UPLOAD VALIDATION !!!
+	##
+	function dz_upload(){
+		
+		$candidat_id = $this->log_user;		
+		$target_dir = "media/candidates/{$candidat_id}/";
+		
+		if (!file_exists($target_dir)) {
+			try {
+				mkdir($target_dir);
+			} 
+			catch (Exception $ex) {
+				die("error");
+			}
+		}
+		
+		move_uploaded_file($_FILES['dzfile']['tmp_name'], $target_dir.$_FILES['dzfile']['name']);
+		
+		$file_type = $this->input->get('type');
+		if ($file_type == 'cv') {
+			$this->sitemodel->update('tab_candidat', ['candidat_cv' => $_FILES['dzfile']['name']], ['candidat_id' => $candidat_id]);
+		}
+		else if ($file_type == 'photo') {
+			$this->sitemodel->update('tab_candidat', ['candidat_foto' => $_FILES['dzfile']['name']], ['candidat_id' => $candidat_id]);
+		}
+	}
+	
+	function dz_remove(){
+		
+		$candidat_id = $this->log_user;		
+		$target_dir = "media/candidates/{$candidat_id}/";
+		
+		if ( file_exists ( $target_dir.$this->input->post("id") ) )
+			unlink($target_dir.$this->input->post("id"));
+		
+		if ($file_type == 'cv') {
+			$this->sitemodel->update('tab_candidat', ['candidat_cv' => ''], ['candidat_id' => $candidat_id]);
+		}
+		else if ($file_type == 'photo') {
+			$this->sitemodel->update('tab_candidat', ['candidat_foto' => ''], ['candidat_id' => $candidat_id]);
+		}
+	}
+		
+	// function university_list() {
+			
+		// $term = $this->db->escape_like_str($this->input->get('src'));
+		// $sql = "SELECT university_id as UID, university_name as UNAME
+				// FROM tab_university
+				// WHERE UPPER(university_name) LIKE '%{$term}%'";
+		// $data = $this->sitemodel->custom_query($sql);
+		// $msg = $res = array();
+		// if ($data != '0' ){
+			// foreach($data as $row){
+				// $msg['id'] = $row->UID;
+				// $msg['text'] = $row->UNAME;
+				// $res[] = $msg;
+			// }
+		// }
+		// echo json_encode($res);
+	// }
+	
+	// function university_list2() {
+			
+		// $res['type'] = 'failed';
+		// $data = $this->sitemodel->view('tab_university', '*');
+		// if($data != '0') {
+			// foreach ($data as $key => $val) {
+				// $res['univ'][$key]['id'] = $val->university_id;
+				// $res['univ'][$key]['title'] = $val->university_name;
+			// }
+		// }
+		// $res['type'] = 'done';		
+		// echo json_encode($res);
+	// }
+}

@@ -1,0 +1,44 @@
+<?php defined('BASEPATH') OR exit('No direct script access allowed');
+
+class Login extends SITE_Controller {
+
+	function __construct(){
+		parent::__construct();		
+	}
+	
+	function index(){
+		
+		$this->session->set_flashdata('error_msg','Login failed');
+		redirect('/', 'refresh');
+	}
+	
+	function checkin(){
+		
+		// if(! $_POST) {
+			
+		// } 
+		
+	
+		// $username=$this->input->post('username');
+		// $password=$this->input->post('password');
+
+		// if($password == "good_pwd")
+		// {
+		// $data=array('username'=>$username,'logged_in'=>TRUE);
+		// $this->session->set_userdata($data);
+		// redirect('/success');   
+		// }   
+		// else 
+		// {
+		// $this->session->set_flashdata('errormessage','Login failed');
+		// redirect('/failed');
+		// }
+		// if( ! password_verify($pwd, $storedpwd) ) {
+										// // $this->sitemodel->attempted_login($usern);
+										// $msg['type'] = 'failed';
+										// $msg['msg'] = '<br />Invalid username or password';							
+									// }
+									// else{
+	}
+	
+}

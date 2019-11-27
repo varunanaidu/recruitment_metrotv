@@ -1,0 +1,1061 @@
+<?php if ( !defined('BASEPATH' ) )exit('No direct script access allowed');?>
+
+<?php
+	# load applicant data
+	if($applicant_data != '0') {
+		
+		foreach($applicant_data as $a) {
+			xss_filter($a); # XSS FILTERING
+			
+			$f1_name 	= $a->candidat_name;
+			$f1_idno 	= $a->id_number;
+			$f1_pob 	= $a->pob;
+			$f1_dob 	= date('d-m-Y', strtotime($a->dob));
+			$f1_gender	= $a->gender;
+			$f1_nat		= $a->nationality;
+			$f1_blood	= $a->blood_id;
+			$f1_religi	= $a->religion_id;
+			$f1_height	= $a->height;
+			$f1_weight	= ($a->weight != '0') ? $a->weight : '';			
+		}
+	}
+?>
+		<div class="col-xs-12 col-md-12 pull-right">
+			<div class="card" id="fc_applicant">
+				<div class="header bg-grey" style="">
+					<h2 class="strong">APPLICATION FORM</h2>
+				</div>
+				
+				<div class="body">
+					<div class="row clearfix">
+						<div class="col-sm-12" style="margin-bottom:0">
+							<div class="alert alert-info bg-indigo" id="fc_app_alert">
+								Please fill out this application form completely and accurately.
+							</div>
+						</div>
+					</div>
+					<?php echo form_open('', ['id' => 'form_applicant'])?>
+					<!-- FORM 0 -->
+					<h4><span class="hidden-xs" for="f0">Upload Photo &amp; CV</span></h4>
+					<fieldset>
+						<div class="row clearfix">
+							<!--div class="col-md-12">Show Photo</div-->
+							<div class="col-md-6">
+								<!--div>Upload Status</div-->
+								<div class="dropzone" id="dz_cv">
+									<div class="dz-message">
+										<div class="drag-icon-cph">
+											<i class="material-icons">touch_app</i>
+										</div>
+										<div class="m-t-10 strong">Drop your CV here or click to upload.</div>
+										<div class="m-t-10 strong">Allowed file extension : doc, docx, pdf</div>
+									</div>
+									<div>
+									</div>
+									<div class="fallback">
+										<input name="fc_drop_cv" type="file">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<!--div>Upload Status</div-->
+								<div class="dropzone" id="dz_photo">
+									<div class="dz-message">
+										<div class="drag-icon-cph">
+											<i class="material-icons">touch_app</i>
+										</div>
+										<div class="m-t-10 strong">Drop your Photo here or click to upload.</div>
+										<div class="m-t-10 strong">Allowed file extension : jpg, png</div>
+									</div>
+									<div class="fallback">
+										<input name="fc_drop_photo" type="file">
+									</div>
+								</div>
+								
+							</div>
+						</div>
+					</fieldset>
+					<!-- #END FORM 0 -->
+					
+					<!-- FORM 1 -->
+					<h4 class=""><span class="hidden-xs" for="f1">Personal Information</span></h4>
+					<fieldset>
+						<div class="form-group form-float" style="margin-top:10px">
+							<div class="form-line">
+								<input type="text" class="form-control" name="f1_name" value="<?=ist($f1_name)?>" required>
+								<label class="form-label">Fullname</label>
+							</div>
+						</div>
+						<div class="form-group form-float">
+							<div class="form-line">
+								<input type="text" class="form-control" name="f1_idno" value="<?=ist($f1_idno)?>" required>
+								<label class="form-label">ID Number <small>(KTP)</small></label>
+							</div>
+						</div>						
+						<div class="row clearfix">
+							<div class="col-sm-4" style="margin-bottom:10px;">
+								<div class="form-group form-float">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f1_pob" value="<?=ist($f1_pob)?>" required>
+										<label class="form-label">Place of Birth</label>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-8" style="margin-bottom:10px;">
+								<div class="form-group form-float">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date" placeholder="Date of Birth (DD-MM-YYYY)" name="f1_dob" required value="<?=ist($f1_dob)?>">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-sm-4" style="margin-bottom:0">
+								<label style="margin-right:20px">Gender</label>
+							</div>
+							<div class="col-sm-8" style="margin-bottom:0">
+								<div class="form-group">
+									<input type="radio" name="f1_gender" id="male" value="M" class="with-gap" required <?=(ist($f1_gender) == 'M') ? 'checked' : ''?>>
+									<label for="male">Male</label>
+									<input type="radio" name="f1_gender" id="female" value="F" class="with-gap" <?=(ist($f1_gender) == 'F') ? 'checked' : ''?>>
+									<label for="female" class="m-l-20">Female</label>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-sm-4" style="margin-bottom:0">
+								<label style="margin-right:20px">Nationality</label>
+							</div>
+							<div class="col-sm-8" style="margin-bottom:0">
+								<div class="form-group">
+									<input type="radio" name="f1_nat" id="wni" value="WNI" class="with-gap" required <?=(ist($f1_nat) == 'WNI') ? 'checked' : ''?>>
+									<label for="wni">WNI</label>
+									<input type="radio" name="f1_nat" id="wna" value="WNA" class="with-gap" <?=(ist($f1_nat) == 'WNA') ? 'checked' : ''?>>
+									<label for="wna" class="m-l-20">WNA</label>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-sm-4" style="margin-bottom:0">
+								<label style="margin-right:20px">Blood Type</label>
+							</div>
+							<div class="col-sm-8" style="margin-bottom:0">
+								<div class="form-group">
+									<input type="radio" name="f1_blood" id="blood_a" value="A" class="with-gap" <?=(ist($f1_blood) == 'A') ? 'checked' : ''?>>
+									<label for="blood_a">A</label>
+									<input type="radio" name="f1_blood" id="blood_b" value="B" class="with-gap" <?=(ist($f1_blood) == 'B') ? 'checked' : ''?>>
+									<label for="blood_b" class="m-l-20">B</label>
+									<input type="radio" name="f1_blood" id="blood_ab" value="AB" class="with-gap" <?=(ist($f1_blood) == 'AB') ? 'checked' : ''?>>
+									<label for="blood_ab" class="m-l-20">AB</label>
+									<input type="radio" name="f1_blood" id="blood_o" value="O" class="with-gap" required <?=(ist($f1_blood) == 'O') ? 'checked' : ''?>>
+									<label for="blood_o" class="m-l-20">O</label>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-sm-4">
+								<label style="margin-right:20px">Religion</label>
+							</div>
+							<div class="col-sm-8">
+								<select class="form-control show-tick" name="f1_religi" data-container="body">
+									<option value="I" <?=(ist($f1_religi) == 'I') ? 'selected' : ''?>>Islam</option>
+									<option value="P" <?=(ist($f1_religi) == 'P') ? 'selected' : ''?>>Kristen Protestan</option>
+									<option value="K" <?=(ist($f1_religi) == 'K') ? 'selected' : ''?>>Katolik</option>
+									<option value="H" <?=(ist($f1_religi) == 'H') ? 'selected' : ''?>>Hindu</option>
+									<option value="B" <?=(ist($f1_religi) == 'B') ? 'selected' : ''?>>Budha</option>
+									<option value="O" <?=(ist($f1_religi) == 'O') ? 'selected' : ''?>>Other</option>
+								</select>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-sm-6" style="margin-bottom:0">
+								<div class="form-group form-float">
+									<div class="form-line">
+										<input type="number" class="form-control" name="f1_height" required value="<?=ist($f1_height)?>">
+										<label class="form-label">Height <small>(cm)</small></label>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-6" style="margin-bottom:0">
+								<div class="form-group form-float">
+									<div class="form-line">
+										<input type="number" class="form-control" name="f1_weight" required value="<?=ist($f1_weight)?>">
+										<label class="form-label">Weight <small>(kg)</small></label>
+									</div>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+					<!-- #END FORM 1 -->
+					<!-- FORM 2 -->
+					<h4><span class="hidden-xs" for="f2">Address Information</span></h4>
+					<fieldset>
+						<div class="form-group form-float" style="margin-top:10px">
+							<div class="form-line">
+								<input type="text" class="form-control" name="f2_cadd" id="f2_cadd" value="" required>
+								<label class="form-label">Current Address</label>
+							</div>
+						</div>						
+						<div class="row clearfix">
+							<div class="col-sm-4" style="margin-bottom:0px;">
+								<div class="form-group form-float">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f2_ccity" id="f2_ccity" required>
+										<label class="form-label">City</label>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-4" style="margin-bottom:0px;">
+								<div class="form-group form-float">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f2_cpost" id="f2_cpost" required>
+										<label class="form-label">Postal Code</label>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-4" style="margin-bottom:0px;">
+								<div class="form-group form-float">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f2_cphone" id="f2_cphone" required>
+										<label class="form-label">Phone</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-sm-12" style="margin-top:20px;margin-bottom:0px;">
+								<div class="form-group">
+									<input type="checkbox" class="filled-in chk-col-orange" name="f2_checkaddress" id="f2_checkaddress">
+									<label for="f2_checkaddress">Permanent Address same as Current Address</label>
+								</div>
+							</div>
+						</div>							
+						<div class="form-group form-float">
+							<div class="form-line">
+								<input type="text" class="form-control" name="f2_padd" id="f2_padd" required>
+								<label class="form-label">Permanent Address</label>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-sm-4" style="margin-bottom:0px;">
+								<div class="form-group form-float">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f2_pcity" id="f2_pcity" required>
+										<label class="form-label">City</label>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-4" style="margin-bottom:0px;">
+								<div class="form-group form-float">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f2_ppost" id="f2_ppost" required>
+										<label class="form-label">Postal Code</label>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-4" style="margin-bottom:0px;">
+								<div class="form-group form-float">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f2_pphone" id="f2_pphone" required>
+										<label class="form-label">Phone <small>(PA)</small></label>
+									</div>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+					<!-- #END FORM 2 -->
+					<!-- FORM 3 -->
+					<h4><span class="hidden-xs" for="f3">Family Information</span></h4>
+					<fieldset>
+						<div class="row clearfix">
+							<div class="col-sm-4">
+								<label class="form-label">Marital Status</label>
+							</div>
+							<div class="col-sm-8">
+								<div class="form-group" style="margin-bottom:0;">
+									<input type="radio" name="f3_marital" id="f3_single" value="Single" class="with-gap" checked>
+									<label for="f3_single" class="m-r-30">Single</label>
+									<input type="radio" name="f3_marital" id="f3_married" value="Married" class="with-gap">
+									<label for="f3_married" class="m-r-30">Married</label>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix for-f3-married collapse">
+							<div class="col-sm-4">
+								<label class="form-label">Date of Marriage</label>
+							</div>
+							<div class="col-sm-8">
+								<div class="form-group" style="margin-bottom:0;">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date" name="f3_marriagedate" placeholder="DD-MM-YYYY">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix for-f3-married collapse">
+							<div class="col-sm-12"><h3>Spouse</h3></div>
+							<div class="col-md-3">
+								<p><b>Name</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f3_spousename" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<p><b>Date of Birth</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date" name="f3_spousedob" placeholder="DD-MM-YYYY">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<p><b>Occupation</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f3_spouseocc" placeholder="Occupation">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<p><b>Education</b></p>
+								<select class="form-control show-tick" name="f3_spouseedu" data-container="body">
+									<option value="GS">Grade School</option>
+									<option value="D3">Diploma (D3)</option>
+									<option value="S1">Bachelor (S1)</option>
+									<option value="S2">Master (S2)</option>
+								</select>
+							</div>
+						</div>
+						<div class="row clearfix for-f3-married collapse">
+							<div class="col-sm-12"><h3 class="inline m-r-10">Children</h3><span class="col-pink strong"><small>(not required to be filled out)</small></span></div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<p><b>Name</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f3_childname[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<p><b>Date of Birth</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date" name="f3_childdob[]" placeholder="DD-MM-YYYY">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<p><b>Gender</b></p>
+								<select class="form-control show-tick" name="f3_childgender[]" data-container="body">
+									<option value="M">Male</option>
+									<option value="F">Female</option>
+								</select>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<p><b>Education</b></p>
+								<select class="form-control show-tick" name="f3_childedu[]" data-container="body">
+									<option value="GS">Grade School</option>
+									<option value="D3">Diploma (D3)</option>
+									<option value="S1">Bachelor (S1)</option>
+									<option value="S2">Master (S2)</option>
+								</select>
+							</div>
+						</div>
+						<div class="row clearfix for-f3-married collapse">
+							<div class="col-md-3" style="margin-bottom:0">
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f3_childname[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date" name="f3_childdob[]" placeholder="DD-MM-YYYY">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<select class="form-control show-tick" name="f3_childgender[]" data-container="body">
+									<option value="M">Male</option>
+									<option value="F">Female</option>
+								</select>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<select class="form-control show-tick" name="f3_childedu[]" data-container="body">
+									<option value="GS">Grade School</option>
+									<option value="D3">Diploma (D3)</option>
+									<option value="S1">Bachelor (S1)</option>
+									<option value="S2">Master (S2)</option>
+								</select>
+							</div>
+						</div>
+						<div class="row clearfix for-f3-married collapse">
+							<div class="col-md-3" style="margin-bottom:0">
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f3_childname[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date" name="f3_childdob[]" placeholder="DD-MM-YYYY">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<select class="form-control show-tick" name="f3_childgender[]" data-container="body">
+									<option value="M">Male</option>
+									<option value="F">Female</option>
+								</select>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<select class="form-control show-tick" name="f3_childedu[]" data-container="body">
+									<option value="GS">Grade School</option>
+									<option value="D3">Diploma (D3)</option>
+									<option value="S1">Bachelor (S1)</option>
+									<option value="S2">Master (S2)</option>
+								</select>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-sm-12"><h3 class="inline m-r-10">Parents</h3><span class="col-pink strong"><small>(not required to be filled out)</small></span></div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<p><b>Name</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f3_parentname[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<p><b>Date of Birth</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date" name="f3_parentdob[]" placeholder="DD-MM-YYYY">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<p><b>Gender</b></p>
+								<select class="form-control show-tick" name="f3_parentgender[]" data-container="body">
+									<option value="M">Male</option>
+									<option value="F">Female</option>
+								</select>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<p><b>Education</b></p>
+								<select class="form-control show-tick" name="f3_parentedu[]" data-container="body">
+									<option value="GS">Grade School</option>
+									<option value="D3">Diploma (D3)</option>
+									<option value="S1">Bachelor (S1)</option>
+									<option value="S2">Master (S2)</option>
+								</select>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-3" style="margin-bottom:0">
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f3_parentname[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date" name="f3_parentdob[]" placeholder="DD-MM-YYYY">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<select class="form-control show-tick" name="f3_parentgender[]" data-container="body">
+									<option value="M">Male</option>
+									<option value="F">Female</option>
+								</select>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<select class="form-control show-tick" name="f3_childedu[]" data-container="body">
+									<option value="GS">Grade School</option>
+									<option value="D3">Diploma (D3)</option>
+									<option value="S1">Bachelor (S1)</option>
+									<option value="S2">Master (S2)</option>
+								</select>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-sm-12"><h3 class="inline m-r-10">Siblings</h3><span class="col-pink strong"><small>(not required to be filled out)</small></span></div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<p><b>Name</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f3_sibname[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<p><b>Date of Birth</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date" name="f3_sibdob[]" placeholder="DD-MM-YYYY">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<p><b>Gender</b></p>
+								<select class="form-control show-tick" name="f3_sibgender[]" data-container="body">
+									<option value="M">Male</option>
+									<option value="F">Female</option>
+								</select>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<p><b>Education</b></p>
+								<select class="form-control show-tick" name="f3_sibedu[]" data-container="body">
+									<option value="GS">Grade School</option>
+									<option value="D3">Diploma (D3)</option>
+									<option value="S1">Bachelor (S1)</option>
+									<option value="S2">Master (S2)</option>
+								</select>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-3" style="margin-bottom:0">
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f3_sibname[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date" name="f3_sibdob[]" placeholder="DD-MM-YYYY">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<select class="form-control show-tick" name="f3_sibgender[]" data-container="body">
+									<option value="M">Male</option>
+									<option value="F">Female</option>
+								</select>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<select class="form-control show-tick" name="f3_sibedu[]" data-container="body">
+									<option value="GS">Grade School</option>
+									<option value="D3">Diploma (D3)</option>
+									<option value="S1">Bachelor (S1)</option>
+									<option value="S2">Master (S2)</option>
+								</select>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-3" style="margin-bottom:0">
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f3_sibname[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date" name="f3_sibdob[]" placeholder="DD-MM-YYYY">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<select class="form-control show-tick" name="f3_sibgender[]" data-container="body">
+									<option value="M">Male</option>
+									<option value="F">Female</option>
+								</select>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<select class="form-control show-tick" name="f3_sibedu[]" data-container="body">
+									<option value="GS">Grade School</option>
+									<option value="D3">Diploma (D3)</option>
+									<option value="S1">Bachelor (S1)</option>
+									<option value="S2">Master (S2)</option>
+								</select>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-3" style="margin-bottom:0">
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f3_sibname[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date" name="f3_sibdob[]" placeholder="DD-MM-YYYY">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<select class="form-control show-tick" name="f3_sibgender[]" data-container="body">
+									<option value="M">Male</option>
+									<option value="F">Female</option>
+								</select>
+							</div>
+							<div class="col-md-3" style="margin-bottom:0">
+								<select class="form-control show-tick" name="f3_sibedu[]" data-container="body">
+									<option value="GS">Grade School</option>
+									<option value="D3">Diploma (D3)</option>
+									<option value="S1">Bachelor (S1)</option>
+									<option value="S2">Master (S2)</option>
+								</select>
+							</div>
+						</div>						
+					</fieldset>
+					<!-- #END FORM 3 -->
+					<!-- FORM 4 -->
+					<h4><span class="hidden-xs" for="f4">Educational Background</span></h4>
+					<fieldset>
+						<div class="row clearfix">
+							<div class="col-sm-12"><h3>Formal Education</h3></div>
+							<div class="col-md-6">
+								<p><b>School / Institution Name</b></p>
+								<select class="form-control show-tick f4_univlist" id="f4_univlist" name="f4_school[]" data-container="body" data-live-search="true" required>
+									<option value="">- Choose -</option>
+									<option value="Other">Other</option>
+									<?php
+										if($list_univ != '0') {
+											foreach($list_univ as $univ) {
+												xss_filter($univ);
+												echo "<option value='{$univ->university_id}'>{$univ->university_name}</option>";
+											}
+										}
+									?>
+									
+								</select>
+							</div>
+							<div class="col-md-6 for-f4-univ" id="test1">
+								<p><b>Other School / Institution</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f4_univother[]" placeholder="">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-4">
+								<p><b>Major</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f4_major[]" placeholder="Name" required>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<p><b>Date (MM/YYYY - MM/YYYY)</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date2" name="f4_date[]" placeholder="Ex: 07/2001 - 07/2005" required>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<p><b>Remark / GPA</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="number" class="form-control" name="f4_gpa[]" required>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-6">
+								<p><b>School / Institution Name</b></p>
+								<select class="form-control show-tick f4_univlist" name="f4_school[]" data-container="body" data-live-search="true">
+									<option value="">- Choose -</option>
+									<option value="Other">Other</option>
+									<?php
+										if($list_univ != '0') {
+											foreach($list_univ as $univ) {
+												xss_filter($univ);
+												echo "<option value='{$univ->university_id}'>{$univ->university_name}</option>";
+											}
+										}
+									?>
+									
+								</select>
+							</div>
+							<div class="col-md-6 for-f4-univ">
+								<p><b>Other School / Institution</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f4_univother[]" placeholder="">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-4">
+								<p><b>Major</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f4_major[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<p><b>Date (MM/YYYY - MM/YYYY)</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date2" name="f4_date[]" placeholder="Ex: 07/2001 - 07/2005">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<p><b>Remark / GPA</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="number" class="form-control" name="f4_gpa[]">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-6">
+								<p><b>School / Institution Name</b></p>
+								<select class="form-control show-tick f4_univlist" name="f4_school[]" data-container="body" data-live-search="true">
+									<option value="">- Choose -</option>
+									<option value="Other">Other</option>
+									<?php
+										if($list_univ != '0') {
+											foreach($list_univ as $univ) {
+												xss_filter($univ);
+												echo "<option value='{$univ->university_id}'>{$univ->university_name}</option>";
+											}
+										}
+									?>
+									
+								</select>
+							</div>
+							<div class="col-md-6 for-f4-univ">
+								<p><b>Other School / Institution</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f4_univother[]" placeholder="">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-4">
+								<p><b>Major</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f4_major[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<p><b>Date (MM/YYYY - MM/YYYY)</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date2" name="f4_date[]" placeholder="Ex: 07/2001 - 07/2005">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<p><b>Remark / GPA</b></p>
+								<div class="form-group">
+									<div class="form-line">
+										<input type="number" class="form-control" name="f4_gpa[]">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-sm-12"><h3 class="inline m-r-10">Informal Education</h3><span class="col-pink strong"><small>(not required to be filled out)</small></span></div>
+							<div class="col-md-4">
+								<p><b>Course / Training</b></p>
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f4_infname[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<p><b>Certification / Proficiency</b></p>
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f4_infcert[]" placeholder="">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<p><b>Year (YYYY)</b></p>
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date-year" name="f4_infyear[]" placeholder="Ex: <?=date('Y')?>">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-4">
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f4_infname[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f4_infcert[]" placeholder="">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date-year" name="f4_infyear[]" placeholder="Ex: <?=date('Y')?>">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-4">
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f4_infname[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f4_infcert[]" placeholder="">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date-year" name="f4_infyear[]" placeholder="Ex: <?=date('Y')?>">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-sm-12"><h3 class="inline m-r-10">Foreign Language Skills</h3><span class="col-pink strong"><small>(not required to be filled out)</small></span></div>
+							<div class="col-md-4">
+								<p><b>Language</b></p>
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f4_foreignname[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<p><b>Spoken</b></p>
+								<select class="form-control show-tick" data-container="body" name="f4_foreignspoken[]">
+									<option value="Basic">Basic</option>
+									<option value="Intermediate">Intermediate</option>
+									<option value="Advanced">Advanced</option>
+								</select>
+							</div>
+							<div class="col-md-4">
+								<p><b>Written</b></p>
+								<select class="form-control show-tick" data-container="body" name="f4_foreignwritten[]">
+									<option value="Basic">Basic</option>
+									<option value="Intermediate">Intermediate</option>
+									<option value="Advanced">Advanced</option>
+								</select>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-4">
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f4_foreignname[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<select class="form-control show-tick" data-container="body" name="f4_foreignspoken[]">
+									<option value="Basic">Basic</option>
+									<option value="Intermediate">Intermediate</option>
+									<option value="Advanced">Advanced</option>
+								</select>
+							</div>
+							<div class="col-md-4">
+								<select class="form-control show-tick" data-container="body" name="f4_foreignwritten[]">
+									<option value="Basic">Basic</option>
+									<option value="Intermediate">Intermediate</option>
+									<option value="Advanced">Advanced</option>
+								</select>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-4">
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f4_foreignname[]" placeholder="Name">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<select class="form-control show-tick" data-container="body" name="f4_foreignspoken[]">
+									<option value="Basic">Basic</option>
+									<option value="Intermediate">Intermediate</option>
+									<option value="Advanced">Advanced</option>
+								</select>
+							</div>
+							<div class="col-md-4">
+								<select class="form-control show-tick" data-container="body" name="f4_foreignwritten[]">
+									<option value="Basic">Basic</option>
+									<option value="Intermediate">Intermediate</option>
+									<option value="Advanced">Advanced</option>
+								</select>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-4">
+								<p><b>English Language Certification</b></p>
+								<select class="form-control show-tick" data-container="body" name="f4_engcert[]">
+									<option value="TOEFL">TOEFL</option>
+									<option value="IELTS">IELTS</option>
+									<option value="TOEIC">TOEIC</option>
+								</select>
+							</div>
+							<div class="col-md-4">
+								<p><b>Year (YYYY)</b></p>
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date-year" name="f4_engyear[]" placeholder="Ex: <?=date('Y')?>">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<p><b>Score</b></p>
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="number" class="form-control" name="f4_engscore[]" placeholder="">
+									</div>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+					<!-- #END FORM 4 -->
+					
+					<!-- FORM 5 -->
+					<h4><span class="hidden-xs" for="f5">Employment Background</span></h4>
+					<fieldset>
+						<div class="row clearfix">
+							<div class="col-sm-12"><h3 class="inline m-r-10">Employment History</h3><span class="col-pink strong"><small>(Fill the most recent employment history at top)</small></span></div>
+							<div class="col-md-4" style="margin-top:10px">
+								<p><b>Date (MM/YYYY - MM/YYYY)</b></p>
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control masked-date2" name="f5_date[]" placeholder="Ex: 07/2001 - 07/2005">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4" style="margin-top:10px">
+								<p><b>Company Name</b></p>
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f5_company[]" placeholder="...">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-4" style="margin-top:10px">
+								<p><b>Position</b></p>
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f5_pos[]" placeholder="...">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-6">
+								<p><b>Job Description</b></p>
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text"class="form-control" name="f5_jobdesc[]" placeholder="...">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<p><b>Reason for Leaving</b></p>
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f5_reason[]" placeholder="...">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-6">
+								<p><b>Report To</b></p>
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f5_report[]" placeholder="...">
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<p><b>Last Salary</b></p>
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f5_lastsal[]" placeholder="...">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-12">
+								<p><b>May we contact this current/previous empoyer?</b></p>
+								<div class="form-group m-b-0">
+									<input type="radio" name="f5_maycontact[1]" id="f5_yes" value="Y" class="with-gap">
+									<label for="f5_yes">Yes</label>
+									<input type="radio" name="f5_maycontact[1]" id="f5_no" value="N" class="with-gap">
+									<label for="f5_no" class="m-l-20">No</label>
+								</div>
+							</div>
+						</div>
+						<div class="row clearfix">
+							<div class="col-md-12">
+								<p><b>If not, please explain why. If yes, please provide name and contact number</b></p>
+								<div class="form-group m-b-0">
+									<div class="form-line">
+										<input type="text" class="form-control" name="f5_explain[]" placeholder="...">
+									</div>
+								</div>
+							</div>
+						</div>
+						
+					</fieldset>
+					<!-- #END FORM 5 -->
+					
+					<!-- AGREEMENT -->
+					<h4><span class="hidden-xs" for="fx">Agreement</span></h4>
+					<fieldset>
+						<div class="row clearfix" style="margin-top:10px">
+							<div class="col-sm-12" style="">
+								<div class="form-group" style="margin-top:20px">
+									<input id="acceptTerms-2" class="filled-in chk-col-orange" name="acceptTerms" type="checkbox" required>
+									<label for="acceptTerms-2" class="strong">I certify that all information provided on this application is true and complete to the best of my knowledge. I understand that any false information or omission may lead to dismissal or disciplinary action.</label>
+								</div>
+							</div>
+						</div>						
+					</fieldset>
+					<!-- #END AGREEMENT -->
+					
+				<?php echo form_close()?>
+				</div>
+			</div>
+		</div>

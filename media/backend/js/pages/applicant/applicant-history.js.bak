@@ -1,0 +1,125 @@
+$(function () {
+    $('.js-basic-example').DataTable({"bDestroy": true});
+	$(".show-tick").selectpicker();
+	
+	$("#vac_id").on("change", function(){
+		var data = { "key" : $(this).val(), "type" : "history" };
+		if ( $(this).val() != "" ){
+			$.ajax({
+				url : base_url + "applicant/filtering",
+				type : "POST",
+				dataType: "JSON",
+				data : data,
+				success : function(data){					
+					if ( data.type === 'done' ){
+						$(".js-basic-example").DataTable().destroy();
+						$(".js-basic-example tbody").html ( data.msg );
+						$(".js-basic-example").DataTable({"bDestroy": true});					
+					}
+					else{
+						swal({
+								title : "Error!", 
+								text : data.msg, 
+								type : "error"
+							}, 
+							function(){
+								swal.close();
+							}
+						);
+					}
+				}
+			});
+		}
+		else
+			$(".js-basic-example").DataTable().destroy();
+			$(".js-basic-example tbody").html ( "" );
+			$(".js-basic-example").DataTable({"bDestroy": true});
+	});
+	
+	$(".js-basic-example").on("click", ".view-img", function(){		
+		$("#model-image").attr("src", $(this).attr("data-src"));
+		$("#defaultModal").modal( "show" );
+	});
+	
+	$(".js-basic-example").on("click", ".btn-action", function(){
+		var data = {"key" : $(this).attr("attr-data")};
+		$.ajax({
+			url : base_url + "applicant/results_history",
+			type : "POST",
+			dataType : "JSON",
+			data : data,
+			success:  function(data){
+				if ( data.type === "done" ){
+					$("#actionModal .modal-body").html ( data.msg );
+					$("#actionModal").modal( "show" );
+				}
+				else{
+					swal({
+							title : "Error!", 
+							text : data.msg, 
+							type : "error"
+						}, 
+						function(){
+							swal.close();
+						}
+					);
+				}
+			}
+		});		
+	});
+	
+	$("#actionModal").on("click", ".view-detail-test", function(){
+		var data = {"key" : $(this).attr("data-key"), "type" : $(this).attr("data-src")};
+		$.ajax({
+			url : base_url + "applicant/detail-test",
+			type : "POST",
+			dataType : "JSON",
+			data : data,
+			success:  function(data){
+				if ( data.type === "done" ){
+					$("#detail-test-modal #detail-test-modal-header").html ( data.header );
+					$("#detail-test-modal .modal-body").html ( data.msg );
+					$("#detail-test-modal").modal( "show" );
+				}
+				else{
+					swal({
+							title : "Error!", 
+							text : data.msg, 
+							type : "error"
+						}, 
+						function(){
+							swal.close();
+						}
+					);
+				}
+			}
+		});
+	});
+	
+	$(".js-basic-example").on("click", ".btn-move-pos", function(){
+		$("#id_move").val ( $(this).attr("attr-data") );
+		$("#move-pos-modal").modal("show");
+	});
+	
+	$("#move-pos-form").ajaxForm({
+		url : base_url + "applicant/move_candidat",
+		dataType : "JSON",
+		beforeSubmit : function(){
+			$("#move-pos-modal .default-footer button").hide();
+			$("#move-pos-modal .default-footer p").text("Moving candidat....").removeClass("alert-danger alert-success alert-warning").addClass("alert-warning").show();
+		},
+		success : function(data){
+			if ( data.type === 'done' ){
+				$("#move-pos-modal .default-footer p").text ( data.msg ).removeClass("alert-danger alert-success alert-warning").addClass("alert-success");
+				setTimeout(function(){window.location.reload();}, 2000);
+			}
+			else{
+				$("#move-pos-modal .default-footer p").text ( data.msg ).removeClass("alert-danger alert-success alert-warning").addClass("alert-danger");
+				setTimeout(function(){
+					$("#move-pos-modal .default-footer button").show();
+					$("#move-pos-modal .default-footer p").hide();
+				},2000);
+			}
+		}
+	});
+});

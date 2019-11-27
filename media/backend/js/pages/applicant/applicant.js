@@ -1,0 +1,462 @@
+$(function () {	
+	$(".show-tick").selectpicker();
+	
+	var tbl_applicant = $('#tbl-applicant');
+	// tbl_applicant.DataTable({"bDestroy": true});
+	
+	// $("#vac_id").on("change", function(){
+	// 	var data = { "key" : $(this).val(), "type" : "manage" };
+	// 	if ( $(this).val() != "" ){
+	// 		$.ajax({
+	// 			url : base_url + "applicant/filtering",
+	// 			type : "POST",
+	// 			dataType: "JSON",
+	// 			data : data,
+	// 			beforeSend : function(){
+	// 				tbl_applicant.addClass("loading-career");
+	// 				tbl_applicant.DataTable().destroy();
+	// 			},
+	// 			success : function(data){					
+	// 				if ( data.type === 'done' ){
+	// 					tbl_applicant.find("tbody").html ( data.msg );
+	// 					tbl_applicant.DataTable({"bDestroy": true});
+	// 				}
+	// 				else{
+	// 					swal("Error!", data.msg, "error");
+	// 				}
+	// 			},
+	// 			complete : function(){
+	// 				tbl_applicant.removeClass("loading-career");
+	// 			}
+	// 		});
+	// 	}
+	// 	else{
+	// 		tbl_applicant.DataTable().destroy();
+	// 		tbl_applicant.find("tbody").html ( "" );
+	// 		tbl_applicant.DataTable({"bDestroy": true});
+	// 	}
+	// });
+
+	tbl_applicant.dataTable({
+		"processing": true, 
+		"language": {
+			"processing": '<i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i><span class="sr-only">Loading...</span>'
+			// "processing": "DataTables is currently busy"
+		},
+		"serverSide": true, 
+		"order": [], 
+		"ajax": {
+			"url": base_url + "applicant/filtering?t=manage&vac=" + $("#vac_id").val(),
+			"type": "POST"
+		},
+		"searchDelay" : 750,
+		// "stateSave": true,
+		// "columnDefs": [{ 
+			// "targets": [ 0 ], 
+			// "orderable": false, 
+		// }]
+	});
+
+	$("#vac_id").on("change", function(){
+		var val = $(this).val();
+		if (val != '') window.location.href = base_url + 'applicant?vac=' + val;
+	});
+	
+	tbl_applicant.on("click", ".view-img", function(){		
+		$("#model-image").attr("src", $(this).attr("data-src"));
+		$("#defaultModal").modal( "show" );
+	});
+	
+	tbl_applicant.on("click", ".btn-action", function(){
+		var data = {"key" : $(this).attr("attr-data")};
+		$.ajax({
+			url : base_url + "applicant/results",
+			type : "POST",
+			dataType : "JSON",
+			data : data,
+			success:  function(data){
+				if ( data.type === "done" ){
+					$("#actionModal .modal-body").html ( data.msg );
+					$("#actionModal").modal( "show" );
+				}
+				else{					
+					swal("Error!", data.msg, "error");
+				}
+			}
+		});		
+	});
+	
+	$("#actionModal").on("click", ".view-detail-test", function(){
+	
+		var data = {"key" : $(this).attr("data-key"), "type" : $(this).attr("data-src")};
+		$.ajax({
+			url : base_url + "applicant/detail-test",
+			type : "POST",
+			dataType : "JSON",
+			data : data,
+			success:  function(data){
+				if ( data.type === "done" ){
+					$("#detail-test-modal #detail-test-modal-header").html ( data.header );
+					$("#detail-test-modal .modal-body").html ( data.msg );
+					$("#detail-test-modal").modal( "show" );
+				}
+				else{
+					swal("Error!", data.msg, "error");
+				}
+			}
+		});
+	});
+	
+	$("#actionModal").on("click", ".call-test", function(){
+		var key = $(this).attr("data-key"),
+			src = $(this).attr("data-src"),
+			vac = $(this).attr("data-vac"),
+			id = $(this).attr("data-id");
+			
+		var data = {"vac" : vac, "id" : id};
+			
+		$.ajax({
+			url : base_url + "applicant/check_test",
+			type : "POST",
+			dataType : "JSON",
+			data : data,
+			success : function(data){
+				if ( data.type === 'done' ){
+					$("#test_key").val ( key );
+					$("#test_vac").val ( vac );
+					$("#test_id").val ( id );
+					$("#call-test-label").html ( src );
+					$("#call-test-modal").modal( "show" );
+					
+					//Datetimepicker plugin
+					$('.datetimepicker').bootstrapMaterialDatePicker({
+						format: 'dddd, YYYY-MM-DD HH:mm',
+						clearButton: true,
+						weekStart: 1
+					});
+				}
+				else{
+					swal("Error!", data.msg, "error");
+				}
+			}
+		});
+	});
+	
+	$('#call-test-form').validate({
+        highlight: function (input) {
+            $(input).parents('.form-line').addClass('error');
+        },
+        unhighlight: function (input) {
+            $(input).parents('.form-line').removeClass('error');
+        },
+        errorPlacement: function (error, element) {
+            $(element).parents('.form-group').append(error);
+        }
+    });
+	
+	$("#detail-test-modal").on("click", ".btn-process-candidate", function(){
+		var vac = $(this).attr("data-vac"),
+			cnd = $(this).attr("data-cnd"),
+			key = $(this).attr("data-key");
+			
+		$("#process_vac").val ( vac );
+		$("#process_id").val ( cnd );
+		$("#process_key").val ( key );
+		
+		$("#process-test-modal").modal ( "show" );
+		
+		//Datetimepicker plugin
+		$('.datetimepicker').bootstrapMaterialDatePicker({
+			format: 'dddd, YYYY-MM-DD HH:mm',
+			clearButton: true,
+			weekStart: 1
+		});
+	});
+	
+	$("#process-test-form").ajaxForm({
+		url : base_url + "applicant/ajax_process",
+		dataType : "JSON",
+		beforeSubmit : function(){
+			$("#process-test-modal .default-footer button").hide();
+			$("#process-test-modal .default-footer p").text("Processing...").addClass("alert-warning").show();
+		},
+		success : function(data){
+			if ( data.type === 'done' ){
+				swal({
+					title : "Success!", 
+					text : data.msg, 
+					type : "success"
+				}, function(){
+					$("#process-test-modal .default-footer button").show();
+					$("#process-test-modal .default-footer p").hide();
+					$("#process-test-modal").modal( "hide" );
+					$("#detail-test-modal").modal ( "hide" );
+					$("#actionModal .modal-body").html ( data.content );
+				});
+			}
+			else{
+				swal({
+					title : "Error!", 
+					text : data.msg, 
+					type : "error"
+				}, function(){
+					$("#process-test-modal .default-footer button").show();
+					$("#process-test-modal .default-footer p").hide();
+				});
+			}
+		}
+	});
+	
+	$("#actionModal").on("click", ".btn-approval", function(){
+		$("#approval_id").val ( $(this).attr("data-id") );
+		$("#approval_key").val ( $(this).attr("data-key") );
+		$("#approval-test-modal").modal( "show" );
+		
+		//Datetimepicker plugin
+		$('.datetimepicker').bootstrapMaterialDatePicker({
+			format: 'dddd, YYYY-MM-DD HH:mm',
+			clearButton: true,
+			weekStart: 1
+		});
+	});
+	
+	$("#approval-test-form").ajaxForm({
+		url : base_url + "applicant/ajax_approval",
+		dataType : "JSON",
+		beforeSubmit : function(){
+			$("#approval-test-modal .default-footer button").hide();
+			$("#approval-test-modal .default-footer p").text("Processing...").addClass("alert-warning").show();
+		},
+		success : function(data){
+			if ( data.type === 'done' ){
+				swal({
+					title : "Success!", 
+					text : data.msg, 
+					type : "success"
+				}, function(){
+					window.location.reload();
+				});
+			}
+			else{
+				swal({
+					title	: "Error!", 
+					text	: data.msg, 
+					type	: "error"
+				}, function(){
+					$("#approval-test-modal .default-footer button").show();
+					$("#approval-test-modal .default-footer p").hide();
+				});
+			}
+		}
+	});
+	
+	$(".btn-create").on("click", function(){
+		$("#new-cnd-modal").modal("show");
+	});
+	$("#new-cnd-form").ajaxForm({
+		url : base_url + "applicant/new-create-candidate",
+		dataType : "JSON",
+		beforeSubmit : function(){
+			$("#new-cnd-modal .default-footer p").text("Processing...").removeClass("alert-warning").addClass("alert-warning").show();
+			$("#new-cnd-modal .default-footer button").hide();
+		},
+		success : function(data){
+			if ( data.type === 'done' ){
+				swal({
+					title	: "Success!", 
+					text	: data.msg, 
+					type	: "success"
+				},
+				function(){
+					window.location.href = data.url;
+				});
+			}
+			else{
+				swal({
+					title	: "Error!", 
+					text	: data.msg, 
+					type	: "error"
+				}, function(){
+					$("#approval-test-modal .default-footer button").show();
+					$("#approval-test-modal .default-footer p").hide();
+				});
+			}
+		}
+	});
+	
+	$("#call-test-form").ajaxForm({
+		url : base_url + "applicant/ajax_test",
+		dataType : "JSON",
+		beforeSubmit : function(){
+			$("#call-test-modal .default-footer button").hide();
+			$("#call-test-modal .default-footer p").text("Processing...").addClass("alert-warning").show();
+		},
+		success : function(data){
+			if ( data.type === 'done' ){
+				swal({
+					title : "Success!", 
+					text : data.msg, 
+					type : "success"
+				}, function(){
+					$("#call-test-modal .default-footer button").show();
+					$("#call-test-modal .default-footer p").hide();
+					$("#call-test-modal").modal( "hide" );
+					$("#actionModal .modal-body").html ( data.content );
+				});
+			}
+			else{
+				swal({
+					title : "Error!", 
+					text : data.msg, 
+					type : "error"
+				}, function(){
+					$("#call-test-modal .default-footer button").show();
+					$("#call-test-modal .default-footer p").hide();
+				});
+			}
+		}
+	});
+	
+	$("#btn-save").on("click", function(){
+		$("#test_button").val ( "S" );
+		if ( $("#call-test-form").valid() )
+			$("#call-test-form").submit();		
+	});
+	$("#btn-save-send").on("click", function(){
+		$("#test_button").val ( "SS" );
+		 if ( $("#call-test-form").valid() )
+			$("#call-test-form").submit();
+	});
+	
+	//create pdf application form based on candidate data
+	tbl_applicant.on("click", ".create-cv", function(){
+		var data = { "key" : $(this).attr("tag-id") };
+		$("#print_preview").modal( "show" );
+		url = base_url + "reporting/loading_page"; 
+		$("#pview").attr('src',url);
+		$("#pview").show('slow');
+		$.ajax({
+			url : base_url + "applicant/get_create_cv",
+			type : "POST",
+			dataType : "JSON",
+			data : data,
+			success : function(data){
+				if ( data.type === 'done' ){
+					$("#pview").attr('src', data.msg);
+					$("#pview").show('slow');
+				}
+				else{
+					$("#print_preview").modal("hide");
+					swal("Error!", data.msg, "error");
+				}
+			}
+		});
+	});
+	
+	$("#detail-test-modal").on("click", ".btn-reset-schedule", function(){
+		var data = {"key" : $(this).attr("data-vac"), "cndid" : $(this).attr("data-cnd"), "type" : $(this).attr("data-key")};
+		$.ajax({
+			url : base_url + "applicant/reset_schedule",
+			type : "POST",
+			dataType : "JSON",
+			data : data,
+			success : function(data){
+				if ( data.type == 'done' ){
+					swal({
+						title : "Success!", 
+						text : data.msg, 
+						type : "success"
+					}, function(){
+						$("#detail-test-modal").modal ( "hide" );
+						$("#actionModal .modal-body").html ( data.content );
+					});
+				}
+				else{
+					swal("Error!", data.msg, "error");
+				}
+			}
+		});
+	});
+	
+	//attachment area
+	$("#actionModal").on("click", ".view-attachment", function(){
+		if ( $(this).attr("tag-data") == "" )
+			$("#target-attachment").attr("href", "javascript:;");		
+		else{
+			if ( $(this).attr("tag-key") == "mcu" )
+				$("#target-attachment").attr("href", basic_url + "media/mcus/" + $(this).attr("tag-data"));
+			else
+				$("#target-attachment").attr("href", basic_url + "media/assessments/" + $(this).attr("tag-data"));
+		}
+		$("#attachmentid").val ( $(this).attr("tag-id") );
+		$("#attachmenttype").val ( $(this).attr("tag-key") );
+		$("#attachment-modal").modal ( "show" );
+	});
+	
+	$("#attachment-form").ajaxForm({
+		url : base_url + "applicant/ajax_attachment",
+		dataType : "JSON",
+		beforeSubmit : function(){
+			$("#attachment-modal .modal-footer button").html ( "Please wait..." ).removeClass("btn-primary").addClass("btn-warning").prop("disabled", true);
+		},
+		success : function(data){
+			if ( data.type == "done" ){
+				swal({
+					title : "",
+					text : data.msg,
+					type : "success"
+				}, function(){
+					$("#attachment-modal .modal-footer button").html ( "Upload" ).removeClass("btn-warning").addClass("btn-primary").prop("disabled", false);
+					$("#attachment-modal").modal( "hide" );
+					$("#actionModal .modal-body").html ( data.content );
+				});
+			}
+			else{
+				swal({
+					title : "",
+					text : data.msg,
+					type : "error"
+				}, function(){
+					$("#attachment-modal .modal-footer button").html ( "Upload" ).removeClass("btn-warning").addClass("btn-primary").prop("disabled", false);
+				});
+			}
+		}
+	});
+	
+	tbl_applicant.on("click", ".open-cv", function(){
+		var $this = $(this);
+		var tag_id		= $(this).attr("tag-id"),
+			tag_data	= $(this).attr("tag-data");
+			
+		var data = {"key" : tag_id, "mycv" : tag_data};
+		
+		if ( tag_id == "" || tag_data == "" ){
+			swal({
+				title : "",
+				text : "Candidat has not upload CV yet.",
+				type : "error"
+			});
+		}
+		else{
+			$.ajax({
+				url : base_url + "applicant/ajax_visited",
+				type : "POST",
+				dataType : "JSON",
+				data : data,
+				success : function(data){
+					if ( data.type == 'done' ){
+						window.open( data.msg, "_blank" );
+						$this.removeClass('special-cv-blue').addClass('special-cv-red');
+					}
+					else{
+						swal({
+							title : "",
+							text : data.msg,
+							type : "error"
+						});
+					}
+				}
+			});
+		}
+	});
+});

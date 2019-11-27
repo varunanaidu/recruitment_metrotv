@@ -1,0 +1,334 @@
+﻿html, body {
+	height:100%;
+	margin: 0;
+	padding: 0;
+}
+body {
+	background-color: #f9f9f9;
+	font-family: "Open Sans", Verdana, Tahoma;
+	font-size:14px;
+}
+#main-wrapper {
+	box-sizing: border-box;
+	min-height: 100%;
+	padding: 0 0 50px;
+	position: relative;
+}
+footer {
+    position: absolute;
+	bottom: 0;
+    left: 0;
+    height: 50px;
+    width: 100%;
+	background:#3a3a3a;
+	color:#b0b0b0;
+}
+footer #footer-container {
+	padding: 30px 0;
+}
+footer #footer-copyright {
+	background:#2d2d2d;
+	padding: 20px 0;
+	font-size:0.9em;
+}
+#fc_logo {
+	display:inline-block;
+	padding-left:10px;
+}
+#fc_logo img {
+	height:40px;
+}
+#fc_title {
+	vertical-align:bottom;
+	font-family:Verdana, Tahoma, Helvetica;
+	padding-left:15px;
+	color:white;
+	line-height:30px;
+	font-weight:bold;
+	font-size:16px;
+	text-shadow:1px 1px 10px #FCB034;
+	display:inline-block;
+	letter-spacing:3px;
+}
+@media(max-width:767px){
+	#fc_title {
+		font-size:12px;
+	}
+}
+.navbar {
+	background: #023e79; /* For browsers that do not support gradients */    
+	background: -webkit-linear-gradient(to bottom right, white 10%, #175795, indigo); /* For Safari 5.1 to 6.0 */
+	background: -o-linear-gradient(to bottom right, white 10%, #175795, indigo); /* For Opera 11.1 to 12.0 */ 
+	background: -moz-linear-gradient(to bottom right, white 10%, #175795, indigo); /* For Firefox 3.6 to 15 */ 
+	background: linear-gradient(to bottom right, white 10%, #175795 50%, indigo); /* Standard syntax (must be last) */ 
+	border-bottom: 2px solid #FCB034;
+}
+.navbar ul {
+	list-style-type:none;
+}
+.navbar-nav > li > a {
+	margin-top:5px;
+	margin-right:15px;
+    padding:15px;
+    margin: 0;
+	display:inline-flex;
+	color:#DDD;
+	font-size:12px;
+	font-family:Verdana, Tahoma, Helvetica;
+}
+.navbar .navbar-toggle {
+	margin-top:-10px;
+}
+.navbar-nav > li > a:hover {
+	display:inline-flex;
+}
+.navbar-nav > li > a > span {
+	margin:3px 5px 0 0;
+}
+.navbar-nav .fc_nav_link {
+	display:inline-flex;
+	width:100%;
+	padding:5px 15px !important;
+	color:indigo !important;
+}
+.navbar-nav .fc_nav_link span {
+	margin:10px 0 0 10px;
+}
+.metro-link {
+	transition:all 0.5s ease;
+}
+.metro-link:hover,
+.metro-link:active,
+.metro-link:focus {
+	color:darkorange;
+}
+
+.bg-metro {
+	background-color: #074979 !important;
+	color: #FFF !important;
+}
+/* modal popup */
+.modal-fc .modal-header {
+	padding:25px;
+}
+@media (min-width: 768px) {
+	.modal-fc {
+		width: 400px;
+	}
+}
+/* btn-fc */
+.btn-fc:hover,
+.btn-fc:focus,
+.btn-fc:active {
+	color:white;
+}
+/* carousel */
+.fc_carousel img {
+	height: 350px !important;
+	width: 100% !important;
+}
+@media(max-width:767px){
+	.fc_carousel img {
+		height: 200px !important;
+		width: 100% !important;
+	}
+}
+.carousel-indicators {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    z-index: 10;
+    width: 100%;
+    padding-left: 0;
+    margin: 0;
+    text-align: center;
+    list-style: none;
+}
+.carousel-caption {
+    position: absolute;
+    right: 15%;
+    bottom: 20px;
+    left: 15%;
+    z-index: 10;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    color: #fff;
+    text-align: left;
+    text-shadow: 0 1px 2px rgba(0,0,0,.6);
+}
+.carousel-control {
+	z-index:10;
+}
+/* Fade transition for carousel items */
+.carousel.fade {
+	opacity: 1;
+}
+.carousel.fade .item {
+	-moz-transition: opacity ease-in-out .7s;
+	-o-transition: opacity ease-in-out .7s;
+	-webkit-transition: opacity ease-in-out .7s;
+	transition: opacity ease-in-out .7s;
+	left: 0 !important;
+	opacity: 0;
+	top:0;
+	position:absolute;
+	width: 100%;
+	display:block !important;
+	z-index:1;
+}
+.carousel.fade .item:first-child {
+	top:auto;
+	position:relative;
+}
+.carousel.fade .item.active {
+	opacity: 1;
+	-moz-transition: opacity ease-in-out .7s;
+	-o-transition: opacity ease-in-out .7s;
+	-webkit-transition: opacity ease-in-out .7s;
+	transition: opacity ease-in-out .7s;
+	z-index:2;
+}
+
+/* carousel slider text */
+#fc_wrapper_slide_text {
+	position:absolute;
+	left:0px;
+	bottom:0px;
+	background:linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,1));
+	height:100px;
+	width:100%;
+	padding:0 20px;
+	display: flex;
+	align-items: center;
+	z-index:9;
+}
+#fc_wrapper_slide_text > p {
+	font-family:Verdana, Tahoma, Helvetica;
+	color:white;
+	font-weight:bold;
+	font-size:14px;
+	margin:0;
+	text-shadow:1px 1px 5px black;
+}
+@media(max-width:767px){
+	#fc_wrapper_slide_text > p {
+		font-size:11px;
+	}
+}
+
+.fc_card .header {
+	padding:10px;
+}
+.fc_card .header h2 {
+	font-size:14px;
+	font-weight:bold;
+}
+
+/*** card job ***/
+.fc_job {
+	/* background:#F9F9F9; */
+	/* box-shadow:none; */
+	transition:all 0.5s ease;
+}
+.fc_job:hover {
+	box-shadow:0 2px 20px rgba(0, 0, 0, 0.8);
+	transition:all 0.5s ease;
+}
+.fc_job .body {
+	background:#FCFCFC;
+}
+.fc_job li {
+	padding:3px 5px;
+	font-size:90%;
+}
+
+#fc_rememberme > i {
+	font-size:14px;
+}
+
+.tooltip-inner {
+	max-width: 350px;
+	/* If max-width does not work, try using width instead */
+	width: 350px;
+	border-radius:1em;
+	font:normal 11px Verdana;
+	padding:7px;
+	color:gold;
+}
+
+/* panel title */
+.panel-title {
+	font-size:14px;
+}
+#fc_panel_news .panel-body {
+	padding:0;
+}
+#fc_panel_news .list-group {
+	margin-bottom:0;
+}
+/* text */
+.strong {
+	font-weight:bold !important;
+}
+.normal {
+	font-weight:normal !important;
+}
+.italic {
+	font-style:italic !important;
+}
+/* inline */
+.inline {
+	display:inline-block;
+}
+/* margin */
+.m-b-0 {
+	margin-bottom:0 !important;
+}
+.m-t-0 {
+	margin-top:0 !important;
+}
+
+/* form */
+#form-control {
+	font-size:14px;
+}
+#fc_applicant .header {
+	padding:10px 30px;
+}
+/* #form_applicant .select2, */
+/* #form_applicant .select2-search__field, */
+/* #form_applicant .select2-results__message { */
+	/* font-size:11px !important; */
+/* } */
+.fc_select2 {
+	font-size:11px !important;
+}
+/* form-wizard */
+.wizard > .steps .number {
+    font-size: 1em;
+}
+.wizard .steps .current a,
+.wizard .steps .current a:active, 
+.wizard .steps .current a:focus, 
+.wizard .steps .current a:hover {
+    background-color: darkorange !important;
+}
+.wizard.vertical>.steps {
+    width: 25%;
+}
+.wizard.vertical>.content {
+    width: 75%;
+}
+.nowrap {
+	white-space:nowrap;
+}
+/* sweetalert */
+.sweet-alert p {
+	font-weight:normal;
+}
+/* table */
+table.home-app thead tr th, 
+table.home-app tbody tr td {
+	padding:5px !important;
+	border:none !important;
+}

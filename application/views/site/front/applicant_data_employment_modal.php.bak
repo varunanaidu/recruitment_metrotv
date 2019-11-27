@@ -1,0 +1,804 @@
+<?php if ( !defined('BASEPATH' ) )exit('No direct script access allowed');?>
+
+<?php
+	$p_empty	= "panel-col-grey";
+	$p_fill		= "panel-col-indigo";
+	$panelColor = [];
+		
+	# load applicant data f1 & f2
+	if($applicant_data != '0') {		
+		foreach($applicant_data as $a) {
+			xss_filter($a); # XSS FILTERING
+			
+			$f1['cv']			= $a->candidat_cv;
+			$f1['photo']		= $a->candidat_foto;
+			
+			$f2['name'] 		= $a->candidat_name;
+			$f2['idno'] 		= $a->id_number;
+			$f2['pob'] 			= $a->pob;
+			$f2['dob'] 			= !empty($a->dob) ? date('d-m-Y', strtotime($a->dob)) : '';
+			$f2['gender']		= $a->gender;
+			$f2['nat']			= $a->nationality;
+			$f2['blood']		= $a->blood_id;
+			$f2['religi']		= $a->religion_id;
+			$f2['height']		= $a->height;
+			$f2['weight']		= $a->weight;
+			$f2['cadd']			= $a->curr_address;
+			$f2['ccity']		= $a->ca_city;
+			$f2['cpost']		= $a->ca_zip_code;
+			$f2['cphone']		= $a->ca_ph;
+			$f2['padd']			= $a->per_address;
+			$f2['pcity']		= $a->pa_city;
+			$f2['ppost']		= $a->pa_zip_code;
+			$f2['pphone']		= $a->pa_ph;
+			$f2['addr_check']	= ($f2['cadd'] == $f2['padd']) and ($f2['ccity'] == $f2['pcity']) and ($f2['cpost'] == $f2['ppost']) and ($f2['cphone'] == $f2['pphone']);
+			
+			$f2['marital_status'] = $a->marital_status;
+			$f2['marriagedate'] = !empty($a->marital_date) ? date('d-m-Y', strtotime($a->marital_date)) : '';
+			$f2['spousename']	= $a->spouse_name;
+			$f2['spousedob']	= !empty($a->spouse_dob) ? date('d-m-Y', strtotime($a->spouse_dob)) : '';
+			$f2['spouseocc']	= $a->spouse_occupation;
+			$f2['spouseedu']	= $a->spouse_edu;
+			
+			$f8['describe']		= $a->candidat_describe;
+			$f8['salary']		= !empty($a->expect_salary) ? $a->expect_salary : '';
+
+			$panelColor[1] 		= (!empty($f1['cv']) and !empty($f1['photo'])) ? $p_fill : $p_empty;
+			$panelColor[2]		= !empty($f2['name']) ? $p_fill : $p_empty;
+			$panelColor[8] 		= !empty($f8['describe']) ? $p_fill : $p_empty;
+			
+		}
+	}
+	
+	#load f3 - EDUCATION
+	if ($applicant_edu != '0') {
+		foreach ($applicant_edu as $edu) { 
+			xss_filter($edu);
+			if ($edu->edu_title == 'S2') {
+				$f3['S2']['edu_institute'] = $edu->edu_institute;
+				$f3['S2']['edu_institute'] = $edu->edu_institute;
+			}
+		}
+		$panelColor[3] = $p_fill;
+	}
+?>
+	<div class="col-xs-12 col-md-12 pull-right" id="fc_applicant">
+		<div class="card">
+			<div class="header bg-indigo" style="">
+				<h2 class="strong">APPLICATION FORM</h2>
+			</div>
+			<div class="body">
+				<div class="row clearfix">
+					<div class="col-md-12">
+						<div class="m-b-20">
+							<p class="strong">Please complete all the required information in this application form</p>
+						</div>
+						<div class="panel-group" id="applicant_form" role="tablist" aria-multiselectable="true">
+							<!-- FORM 1 -->
+							<div class="panel <?=ist($panelColor[1], $p_empty)?>">
+								<div class="panel-heading" role="tab" id="f1_heading">
+									<h4 class="panel-title">
+										<a role="button" data-toggle="collapse" data-parent="#applicant_form" href="#f1_upload" aria-expanded="true" aria-controls="f1_upload">
+											<i class="material-icons">cloud_upload</i> 1. Upload CV &amp; Latest Photo
+										</a>
+									</h4>
+								</div>
+								<div id="f1_upload" class="panel-collapse collapse" role="tabpanel" aria-labelledby="f1_heading">
+									<div class="panel-body">
+										<?php echo form_open('', ['id' => 'frm_f1', 'class' => 'frm_applicant'])?>
+										<div class="row clearfix">
+											<div class="col-md-6">
+												<div class="dropzone" id="dz_cv">
+													<div class="dz-message">
+														<div class="drag-icon-cph">
+															<i class="material-icons">cloud_upload</i>
+														</div>
+														<div class="m-t-10">Drop your <strong>CV</strong> here or <strong>click</strong> to upload.</div>
+														<div class="m-t-10"><em>Allowed file extension : doc, docx, pdf (&lt; 200kb)</em></div>
+													</div>
+													<div>
+													</div>
+													<div class="fallback">
+														<input name="fc_drop_cv" type="file" required>
+													</div>
+												</div>
+											</div>
+											<div class="col-md-6">
+												<div class="dropzone" id="dz_photo">
+													<div class="dz-message">
+														<div class="drag-icon-cph">
+															<i class="material-icons">cloud_upload</i>
+														</div>
+														<div class="m-t-10">Drop your <strong>Latest Photo</strong> here or <strong>click</strong> to upload.</div>
+														<div class="m-t-10"><em>Allowed file extension : jpg, png (&lt; 200kb)</em></div>
+													</div>
+													<div class="fallback">
+														<input name="fc_drop_photo" type="file" required>
+													</div>
+												</div>
+											</div>
+											<div class="col-md-12 m-t-10 text-center">
+												<button class="btn btn-lg bg-indigo waves-effect" data-type="f1" type="button">Save Changes</button>
+											</div>
+										</div>
+										<?php echo form_close()?>
+									</div>
+								</div>
+							</div>
+							<!-- FORM 2 -->
+							<div class="panel <?=ist($panelColor[2], $p_empty)?>">
+								<div class="panel-heading" role="tab" id="f2_heading">
+									<h4 class="panel-title">
+										<a role="button" data-toggle="collapse" data-parent="#applicant_form" href="#f2_personal" aria-expanded="true" aria-controls="f2_personal">
+											<i class="material-icons">perm_contact_calendar</i> 2. Personal Information
+										</a>
+									</h4>
+								</div>
+								<div id="f2_personal" class="panel-collapse collapse" role="tabpanel" aria-labelledby="f2_heading">
+									<div class="panel-body">
+										<?php echo form_open('', ['id' => 'frm_f2', 'class' => 'frm_applicant'])?>
+										<div class="row clearfix">
+											<div class="col-md-12">
+												<div class="form-group form-float" style="margin-top:10px">
+													<div class="form-line">
+														<input type="text" class="form-control" name="f2[name]" value="<?=ist($f2['name'])?>" required>
+														<label class="form-label">Fullname</label>
+													</div>
+												</div>
+												<div class="form-group form-float">
+													<div class="form-line">
+														<input type="text" class="form-control" name="f2[idno]" value="<?=ist($f2['idno'])?>" required>
+														<label class="form-label">ID Number <small>(KTP)</small></label>
+													</div>
+												</div>						
+												<div class="row clearfix">
+													<div class="col-sm-4" style="margin-bottom:10px;">
+														<div class="form-group form-float">
+															<div class="form-line">
+																<input type="text" class="form-control" name="f2[pob]" value="<?=ist($f2['pob'])?>" required>
+																<label class="form-label">Place of Birth</label>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-8" style="margin-bottom:10px;">
+														<div class="form-group">
+															<div class="form-line">
+																<input type="text" class="form-control date-picker" placeholder="Date of Birth" name="f2[dob]" required value="<?=ist($f2['dob'])?>">
+																<!--label class="form-label">Date of Birth</label-->
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="row clearfix">
+													<div class="col-sm-4" style="margin-bottom:0">
+														<label style="margin-right:20px">Gender</label>
+													</div>
+													<div class="col-sm-8" style="margin-bottom:0">
+														<div class="form-group">
+															<input type="radio" name="f2[gender]" id="male" value="M" class="with-gap radio-col-orange" required <?=(ist($f2['gender']) == 'M') ? 'checked' : ''?>>
+															<label for="male">Male</label>
+															<input type="radio" name="f2[gender]" id="female" value="F" class="with-gap radio-col-orange" <?=(ist($f2['gender']) == 'F') ? 'checked' : ''?>>
+															<label for="female" class="m-l-20">Female</label>
+														</div>
+													</div>
+												</div>
+												<div class="row clearfix">
+													<div class="col-sm-4" style="margin-bottom:0">
+														<label style="margin-right:20px">Nationality</label>
+													</div>
+													<div class="col-sm-8" style="margin-bottom:0">
+														<div class="form-group">
+															<input type="radio" name="f2[nat]" id="wni" value="WNI" class="with-gap radio-col-orange" required <?=(ist($f2['nat']) == 'WNI') ? 'checked' : ''?>>
+															<label for="wni">WNI</label>
+															<input type="radio" name="f2[nat]" id="wna" value="WNA" class="with-gap radio-col-orange" <?=(ist($f2['nat']) == 'WNA') ? 'checked' : ''?>>
+															<label for="wna" class="m-l-20">WNA</label>
+														</div>
+													</div>
+												</div>
+												<div class="row clearfix">
+													<div class="col-sm-4" style="margin-bottom:0">
+														<label style="margin-right:20px">Blood Type</label>
+													</div>
+													<div class="col-sm-8" style="margin-bottom:0">
+														<div class="form-group">
+															<input type="radio" name="f2[blood]" id="blood_a" value="A" class="with-gap radio-col-orange" <?=(ist($f2['blood']) == 'A') ? 'checked' : ''?>>
+															<label for="blood_a">A</label>
+															<input type="radio" name="f2[blood]" id="blood_b" value="B" class="with-gap radio-col-orange" <?=(ist($f2['blood']) == 'B') ? 'checked' : ''?>>
+															<label for="blood_b" class="m-l-20">B</label>
+															<input type="radio" name="f2[blood]" id="blood_ab" value="AB" class="with-gap radio-col-orange" <?=(ist($f2['blood']) == 'AB') ? 'checked' : ''?>>
+															<label for="blood_ab" class="m-l-20">AB</label>
+															<input type="radio" name="f2[blood]" id="blood_o" value="O" class="with-gap radio-col-orange" required <?=(ist($f2['blood']) == 'O') ? 'checked' : ''?>>
+															<label for="blood_o" class="m-l-20">O</label>
+														</div>
+													</div>
+												</div>
+												<div class="row clearfix">
+													<div class="col-sm-4">
+														<label style="">Religion</label>
+													</div>
+													<div class="col-sm-8">
+														<select class="form-control show-tick" name="f2[religi]" data-container="body">
+															<option value="I" <?=(ist($f2['religi']) == 'I') ? 'selected' : ''?>>Islam</option>
+															<option value="P" <?=(ist($f2['religi']) == 'P') ? 'selected' : ''?>>Kristen Protestan</option>
+															<option value="K" <?=(ist($f2['religi']) == 'K') ? 'selected' : ''?>>Kristen Katolik</option>
+															<option value="H" <?=(ist($f2['religi']) == 'H') ? 'selected' : ''?>>Hindu</option>
+															<option value="B" <?=(ist($f2['religi']) == 'B') ? 'selected' : ''?>>Budha</option>
+															<option value="O" <?=(ist($f2['religi']) == 'O') ? 'selected' : ''?>>Other</option>
+														</select>
+													</div>
+												</div>
+												<div class="row clearfix">
+													<div class="col-sm-6" style="margin-bottom:0">
+														<div class="form-group form-float">
+															<div class="form-line">
+																<input type="number" class="form-control" name="f2[height]" required value="<?=ist($f2['height'])?>">
+																<label class="form-label">Height <small>(cm)</small></label>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-6" style="margin-bottom:0">
+														<div class="form-group form-float">
+															<div class="form-line">
+																<input type="number" class="form-control" name="f2[weight]" required value="<?=ist($f2['weight'])?>">
+																<label class="form-label">Weight <small>(kg)</small></label>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="form-group form-float" style="margin-top:10px">
+													<div class="form-line">
+														<input type="text" class="form-control" name="f2[cadd]" id="f2_cadd" value="<?=ist($f2['cadd'])?>" required>
+														<label class="form-label">Current Address</label>
+													</div>
+												</div>						
+												<div class="row clearfix">
+													<div class="col-sm-4" style="margin-bottom:0px;">
+														<div class="form-group form-float">
+															<div class="form-line">
+																<input type="text" class="form-control" name="f2[ccity]" id="f2_ccity" value="<?=ist($f2['ccity'])?>" required>
+																<label class="form-label">City</label>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-4" style="margin-bottom:0px;">
+														<div class="form-group form-float">
+															<div class="form-line">
+																<input type="text" class="form-control" name="f2[cpost]" id="f2_cpost" value="<?=ist($f2['cpost'])?>" required>
+																<label class="form-label">Postal Code</label>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-4" style="margin-bottom:0px;">
+														<div class="form-group form-float">
+															<div class="form-line">
+																<input type="text" class="form-control" name="f2[cphone]" id="f2_cphone" value="<?=ist($f2['cphone'])?>" required>
+																<label class="form-label">Phone</label>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="row clearfix">
+													<div class="col-sm-12" style="margin-top:20px;margin-bottom:0px;">
+														<div class="form-group">
+															<input type="checkbox" class="filled-in chk-col-orange" name="f2[checkaddress]" id="f2_checkaddress" <?=$f2['addr_check'] ? 'checked' : ''?>>
+															<label for="f2_checkaddress">Permanent Address same as Current Address</label>
+														</div>
+													</div>
+												</div>							
+												<div class="form-group form-float">
+													<div class="form-line">
+														<input type="text" class="form-control" name="f2[padd]" id="f2_padd" value="<?=ist($f2['padd'])?>" required>
+														<label class="form-label">Permanent Address</label>
+													</div>
+												</div>
+												<div class="row clearfix">
+													<div class="col-sm-4">
+														<div class="form-group form-float">
+															<div class="form-line">
+																<input type="text" class="form-control" name="f2[pcity]" id="f2_pcity" value="<?=ist($f2['pcity'])?>" required>
+																<label class="form-label">City</label>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-4">
+														<div class="form-group form-float">
+															<div class="form-line">
+																<input type="text" class="form-control" name="f2[ppost]" id="f2_ppost" value="<?=ist($f2['ppost'])?>" required>
+																<label class="form-label">Postal Code</label>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-4">
+														<div class="form-group form-float">
+															<div class="form-line">
+																<input type="text" class="form-control" name="f2[pphone]" id="f2_pphone" value="<?=ist($f2['pphone'])?>" required>
+																<label class="form-label">Phone</label>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="row clearfix">
+													<div class="col-sm-4">
+														<label class="form-label">Marital Status</label>
+													</div>
+													<div class="col-sm-8">
+														<div class="form-group" style="margin-bottom:0;">
+															<input type="radio" name="f2[marital_status]" id="f2_single" value="Single" class="with-gap" <?=($f2['marital_status'] != 'Married') ? 'checked' : ''?>>
+															<label for="f2_single" class="m-r-30">Single</label>
+															<input type="radio" name="f2[marital_status]" id="f2_married" value="Married" class="with-gap" <?=($f2['marital_status'] != 'Married') ? '' : 'checked'?>>
+															<label for="f2_married" class="m-r-30">Married</label>
+														</div>
+													</div>
+												</div>
+												<div class="row clearfix for-f2-married <?=($f2['marital_status'] != 'Married') ? 'collapse' : ''?>">
+													<div class="col-sm-4">
+														<label class="form-label">Date Of Marriage</label>
+													</div>
+													<div class="col-sm-8">
+														<div class="form-group form-float">
+															<div class="form-line">
+																<input type="text" class="form-control date-picker" name="f2[marriagedate]" value="<?=ist($f2['marriagedate'])?>" placeholder="DD-MM-YYYY">
+																<label class="form-label"></label>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="row clearfix for-f2-married <?=($f2['marital_status'] != 'Married') ? 'collapse' : ''?>">
+													<div class="col-md-6">
+														<div class="form-group form-float">
+															<div class="form-line">
+																<input type="text" class="form-control" name="f2[spousename]" placeholder="" value="<?=ist($f2['spousename'])?>">
+																<label class="form-label">Spouse Name</label>
+															</div>
+														</div>
+													</div>
+													<div class="col-md-6">
+														<div class="form-group">
+															<div class="form-line">
+																<input type="text" class="form-control date-picker" name="f2[spousedob]" placeholder="Spouse DOB" value="<?=ist($f2['spousedob'])?>">
+															</div>
+														</div>
+													</div>
+													<div class="col-md-6">
+														<div class="form-group form-float">
+															<div class="form-line">
+																<input type="text" class="form-control" name="f2[spouseocc]" placeholder="" value="<?=ist($f2['spouseocc'])?>"><label class="form-label">Spouse Occupation</label>
+															</div>
+														</div>
+													</div>
+													<div class="col-md-6">
+														<select class="form-control show-tick" name="f2[spouseedu]" data-container="body">
+															<option value="">- Spouse Education -</option>
+															<option value="SMU" <?=(ist($f2['spouseedu']) == 'SMU') ? 'selected' : ''?>>High School</option>
+															<option value="D3" <?=(ist($f2['spouseedu']) == 'D3') ? 'selected' : ''?>>Diploma (D3)</option>
+															<option value="S1" <?=(ist($f2['spouseedu']) == 'S1') ? 'selected' : ''?>>Bachelor (S1)</option>
+															<option value="S2" <?=(ist($f2['spouseedu']) == 'S2') ? 'selected' : ''?>>Master (S2)</option>
+														</select>
+													</div>
+												</div>
+											</div>
+											<div class="col-md-12 m-t-10 text-center">
+												<button class="btn btn-lg bg-indigo waves-effect" data-type="fx" type="button">Save Changes</button>
+											</div>
+										</div>
+										<?php echo form_close()?>
+									</div>
+								</div>
+							</div>
+							<!-- FORM 3 -->
+							<div class="panel <?=ist($panelColor[3], $p_empty)?>">
+								<div class="panel-heading" role="tab" id="f3_heading">
+									<h4 class="panel-title">
+										<a class="collapsed" role="button" data-toggle="collapse" data-parent="#applicant_form" href="#f3_educational" aria-expanded="false" aria-controls="f3_educational">
+											<i class="material-icons">local_library</i> 3. Educational Background
+										</a>
+									</h4>
+								</div>
+								<div id="f3_educational" class="panel-collapse collapse" role="tabpanel" aria-labelledby="f3_heading">
+									<div class="panel-body">
+										<?php echo form_open('', ['id' => 'frm_f3', 'class' => 'frm_applicant'])?>
+										<div class="row clearfix">
+											<div class="col-sm-12"><h3>Formal Education</h3></div>
+										</div>
+										<div class="table-responsive">
+											<table class="table table-bordered">
+												<thead>
+													<tr>
+														<th>Grade</th>
+														<th>School / Institution</th>
+														<th>Major</th>
+														<th>Date (Month / Year)</th>
+														<th>GPA</th>
+													</tr>
+												</thead>
+												<tbody>
+													<?php
+														$grade = ['S2', 'S1', 'D3', 'SMU'];
+														$univ_counter = 0;
+														foreach ($grade as $grd) {
+													?>
+													<tr class="<?=$grd?>">
+														<td class="text-center strong" style="width:5%;vertical-align:middle"><?=$grd?></td>
+														<td style="width:35%">
+															<input type="hidden" name="f3[<?=$univ_counter?>][grade]" value="<?=$grd?>">
+															<?php if ($grd != 'SMU') { ?>
+															<select class="form-control show-tick f3_university" id="" name="f3[<?=$univ_counter?>][university]" data-container="body" data-live-search="true">
+																<option value="">- Choose -</option>
+																<option value="Other">Other</option>
+																<?php
+																	if($university != '0') {
+																		foreach($university as $univ) {
+																			xss_filter($univ);
+																			echo "<option value='{$univ->university_name}'>{$univ->university_name}</option>";
+																		}
+																	}
+																?>															
+															</select>
+															<div class="form-group collapse for-f3-univ m-t-15 m-b-0">
+																<div class="form-line">
+																	<input type="text" class="form-control" name="f3[<?=$univ_counter?>][univother]" placeholder="Type here..">
+																</div>
+															</div>
+															<?php } else { ?>
+															<select class="form-control ms f3_university collapse" id="" name="f3[<?=$univ_counter?>][university]" data-container="body" data-live-search="true">
+																<option value="">- Choose -</option>
+																<option value="Other">Other</option>
+																<?php
+																	if($university != '0') {
+																		foreach($university as $univ) {
+																			xss_filter($univ);
+																			echo "<option value='{$univ->university_name}'>{$univ->university_name}</option>";
+																		}
+																	}
+																?>															
+															</select>
+															<div class="form-group for-f3-univ m-b-0">
+																<div class="form-line">
+																	<input type="text" class="form-control" name="f3[<?=$univ_counter?>][univother]" placeholder="Type here..">
+																</div>
+															</div>
+															<?php } ?>
+														</td>
+														<td style="width:25%">
+															<div class="form-group m-b-0">
+																<div class="form-line">
+																	<input type="text" class="form-control" name="f3[<?=$univ_counter?>][major]">
+																</div>
+															</div>
+														</td>
+														<td style="width:25%">
+															<div class="form-group m-b-0">
+																<div class="form-line">
+																	<div class="input-daterange input-group month-picker" id="" style="margin-bottom:4px">
+																		<input type="text" class="input-sm form-control" name="f3[<?=$univ_counter?>][date_start]"/>
+																		<span class="input-group-addon">to</span>
+																		<input type="text" class="input-sm form-control" name="f3[<?=$univ_counter?>][date_end]" />
+																	</div>
+																</div>
+															</div>
+														</td>
+														<td style="width:10%">
+															<div class="form-group m-b-0">
+																<div class="form-line">
+																	<input type="number" class="form-control" name="f3[<?=$univ_counter?>][gpa]">
+																</div>
+															</div>
+														</td>
+													</tr>
+													<?php 
+															$univ_counter++;
+														} 
+													?>
+												</tbody>
+											</table>
+										</div>
+										<div class="col-md-12 m-t-10 text-center">
+											<button class="btn btn-lg bg-indigo waves-effect" data-type="fx" type="button">Save Changes</button>
+										</div>
+										<?php echo form_close()?>
+									</div>
+								</div>
+							</div>
+							<!-- FORM 4 -->
+							<div class="panel <?=ist($panelColor[4], $p_empty)?>">
+								<div class="panel-heading" role="tab" id="f4_heading">
+									<h4 class="panel-title">
+										<a class="collapsed" role="button" data-toggle="collapse" data-parent="#applicant_form" href="#f4_family" aria-expanded="false" aria-controls="f4_family">
+											<i class="material-icons">people</i> 4. Family Information
+										</a>
+									</h4>
+								</div>
+								<div id="f4_family" class="panel-collapse collapse" role="tabpanel" aria-labelledby="f4_heading">
+									<div class="panel-body">
+										<?php echo form_open('', ['id' => 'frm_f4', 'class' => 'frm_applicant'])?>
+										<div class="row clearfix">
+											<div class="col-md-12 m-t-10 text-center">
+												<button class="btn btn-lg bg-indigo waves-effect" data-type="fx" type="button">Save Changes</button>
+											</div>
+										</div>
+										<?php echo form_close()?>
+									</div>
+								</div>
+							</div>
+							<!-- FORM 5 -->
+							<div class="panel <?=ist($panelColor[5], $p_empty)?>">
+								<div class="panel-heading" role="tab" id="f5_heading">
+									<h4 class="panel-title">
+										<a class="collapsed" role="button" data-toggle="collapse" data-parent="#applicant_form" href="#f5_employment" aria-expanded="false" aria-controls="f5_employment">
+											<i class="material-icons">work</i> 5. Employment Background
+										</a>
+									</h4>
+								</div>
+								<div id="f5_employment" class="panel-collapse collapse" role="tabpanel" aria-labelledby="f5_heading">
+									<div class="panel-body">
+										<div class="row clearfix">
+											<div class="col-sm-12 strong italic text-center">Employment history for the last 10 years. Insert the most recent first.</div>
+											<button id="add_employment" class="btn btn-lg bg-orange waves-effect" data-toggle="modal" data-target="#modal_add_employment">Add</a>
+										</div>
+										<?php //echo form_open('', ['id' => 'frm_f5', 'class' => 'frm_applicant'])?>
+										<!--div class="row clearfix">
+											<div class="col-md-6">
+												<label for="f5_company">Company Name</label>
+												<div class="form-group">
+													<div class="form-line">
+														<input type="text" name="f5[company]" class="form-control" required>
+													</div>
+												</div>
+												<label for="f5_date">Date (Month / Year)</label>
+												<div class="form-group">
+													<div class="form-line">
+														<div class="input-daterange input-group month-picker" id="" style="margin-bottom:4px">
+															<input type="text" class="input-sm form-control" name="f5[date_start]"/>
+															<span class="input-group-addon">to</span>
+															<input type="text" class="input-sm form-control" name="f5[date_end]" />
+														</div>
+													</div>
+												</div>
+												<label for="f5_title">Title</label>
+												<div class="form-group">
+													<div class="form-line">
+														<input type="text" name="f5[title]" class="form-control" required>
+													</div>
+												</div>
+												<label for="f5_report">Report To</label>
+												<div class="form-group">
+													<div class="form-line">
+														<input type="text" name="f5[report]" class="form-control" required>
+													</div>
+												</div>
+												<label for="f5_salary">Last Salary (IDR)</label>
+												<div class="form-group">
+													<div class="form-line">
+														<input type="text" name="f5[salary]" class="form-control" required>
+													</div>
+												</div>
+												<label for="f5_description">Job Description</label>
+												<div class="form-group">
+													<div class="form-line">
+														<input type="text" name="f5[description]" class="form-control" required>
+													</div>
+												</div>
+												<label for="f5_reason">Reason For Leaving</label>
+												<div class="form-group">
+													<div class="form-line">
+														<input type="text" name="f5[reason]" class="form-control" required>
+													</div>
+												</div>
+												<label for="f5_may_contact">May we contact this current/previous employer?</label>
+												<div class="form-group m-t-10">
+													<input type="radio" name="f5[may_contact]" id="f5_yes" class="with-gap" checked>
+													<label for="f5_yes">Yes</label>
+													<input type="radio" name="f5[may_contact]" id="f5_no" class="with-gap">
+													<label for="f5_no" class="m-l-20">No</label>
+												</div>
+												<label for="f5_reason_contact">If not, please explain why.<br>If yes, please provide name and contact number.</label>
+												<div class="form-group">
+													<div class="form-line">
+														<input type="text" name="f5[reason_contact]" class="form-control" required>
+													</div>
+												</div>
+											</div>
+											<div class="col-md-6">
+												history panel
+											</div>
+										</div-->
+										<div class="row clearfix">
+											<div class="col-md-12 m-t-10 text-center">
+												<button class="btn btn-lg bg-indigo waves-effect" data-type="fx" type="button">Save Changes</button>
+											</div>
+										</div>
+										<?php //echo form_close()?>
+									</div>
+								</div>
+							</div>
+							<!-- FORM 6 -->
+							<div class="panel <?=ist($panelColor[6], $p_empty)?>">
+								<div class="panel-heading" role="tab" id="f6_heading">
+									<h4 class="panel-title">
+										<a class="collapsed" role="button" data-toggle="collapse" data-parent="#applicant_form" href="#f6_organizational" aria-expanded="false" aria-controls="f6_organizational">
+											<i class="material-icons">folder_shared</i> 6. Organizational Experience
+										</a>
+									</h4>
+								</div>
+								<div id="f6_organizational" class="panel-collapse collapse" role="tabpanel" aria-labelledby="f6_heading">
+									<div class="panel-body">
+										<?php echo form_open('', ['id' => 'frm_f6', 'class' => 'frm_applicant'])?>
+										<div class="row clearfix">
+											<!--div class="col-md-12 m-t-10 text-center">
+												<button class="btn btn-lg bg-indigo waves-effect" data-type="fx" type="button">Save Changes</button>
+											</div-->
+										</div>
+										<?php echo form_close()?>
+									</div>
+								</div>
+							</div>
+							<!-- FORM 7 -->
+							<div class="panel <?=ist($panelColor[7], $p_empty)?>">
+								<div class="panel-heading" role="tab" id="f7_heading">
+									<h4 class="panel-title">
+										<a class="collapsed" role="button" data-toggle="collapse" data-parent="#applicant_form" href="#f7_references" aria-expanded="false" aria-controls="f7_references">
+											<i class="material-icons">contact_phone</i> 7. References
+										</a>
+									</h4>
+								</div>
+								<div id="f7_references" class="panel-collapse collapse" role="tabpanel" aria-labelledby="f7_heading">
+									<div class="panel-body">
+										<?php echo form_open('', ['id' => 'frm_f7', 'class' => 'frm_applicant'])?>
+										<div class="row clearfix">
+											<!--div class="col-md-12 m-t-10 text-center">
+												<button class="btn btn-lg bg-indigo waves-effect" data-type="fx" type="button">Save Changes</button>
+											</div-->
+										</div>
+										<?php echo form_close()?>
+									</div>
+								</div>
+							</div>
+							<!-- FORM 8 -->
+							<div class="panel <?=ist($panelColor[8], $p_empty)?>">
+								<div class="panel-heading" role="tab" id="f8_heading">
+									<h4 class="panel-title">
+										<a class="collapsed" role="button" data-toggle="collapse" data-parent="#applicant_form" href="#f8_reason" aria-expanded="false" aria-controls="f8_reason">
+											<i class="material-icons">help_outline</i> 8. Why we should hire you ?
+										</a>
+									</h4>
+								</div>
+								<div id="f8_reason" class="panel-collapse collapse" role="tabpanel" aria-labelledby="f8_heading">
+									<div class="panel-body">
+										<?php echo form_open('',['id' => 'frm_f8', 'class' => 'frm_applicant'])?>
+										<div class="row clearfix">
+											<div class="col-md-12">
+												<label for="f8_describe">Describe yourself (strength, weakness, etc.) &amp; explain why we should hire you</label>
+												<div class="form-group">
+													<div class="form-line">
+														<textarea id="f8_describe" name="f8[describe]" cols="30" rows="3" class="form-control no-resize" required><?=ist($f8['describe'])?></textarea>
+													</div>
+												</div>
+												<label for="f8_salary">Expected Salary (IDR)</label>
+												<div class="form-group form-float">
+													<div class="form-line">
+														<input type="text" class="form-control" id="f8_salary" name="f8[salary]" value="<?=ist($f8['salary'])?>" required data-rule-number="true">
+													</div>
+												</div>
+											</div>
+											<div class="col-md-12 m-t-10 text-center">
+												<button class="btn btn-lg bg-indigo waves-effect" data-type="fx" type="button">Save Changes</button>
+											</div>
+										</div>
+										<?php echo form_close()?>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="m-t-30">
+							<div class="well text-center">
+								<p class="strong"><em>I certify that all information provided on this application is true and complete to the best of my knowledge.</em></p><p class="strong"><em>I understand that any false information or omission may lead to dismissal or discplinary action.</em></p>
+							</div>
+							<?php 
+								if (isset($vacancy_detail) and $vacancy_detail != '0') {
+									$vac_id = "";
+									foreach ($vacancy_detail as $v) {
+										xss_filter($v);
+										$vac_title = $v->vacant_title;
+										$vac_id = $v->vacant_id;
+									}
+							?>
+							<hr>
+							<div class="text-center m-t-30">
+								<p class="m-b-20">Continue with applying vacancy : <strong><?=$vac_title?></strong></p>
+								<button class="btn btn-lg bg-indigo waves-effect m-r-20" data-type="apply" data-vid="<?=$vac_id?>" type="button">Yes, I'm sure !</button><button class="btn btn-lg bg-red waves-effect" data-type="back" data-href="<?=base_url()?>" type="button">No, send me back !</button>
+							</div>
+							<?php 
+								} 
+								else {
+							?>
+							<hr>
+							<div class="text-center m-t-30">
+								<a class="btn btn-lg bg-indigo waves-effect" href="<?=base_url()?>">Vacancy List</a>
+							</div>
+							<?php 
+								}
+							?>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" id="modal_add_employment" tabindex="-1" role="dialog">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h4 class="modal-title">Employment Background</h4>
+					</div>
+					<?php echo form_open('', ['id' => 'frm_f5', 'class' => 'frm_applicant'])?>
+					<div class="modal-body" id="">
+						<label for="f5_company">Company Name</label>
+						<div class="form-group">
+							<div class="form-line">
+								<input type="text" name="f5[company]" class="form-control" required>
+							</div>
+						</div>
+						<label for="f5_date">Date (Month / Year)</label>
+						<div class="form-group">
+							<div class="form-line">
+								<div class="input-daterange input-group month-picker" id="" style="margin-bottom:4px">
+									<input type="text" class="input-sm form-control" name="f5[date_start]"/>
+									<span class="input-group-addon">to</span>
+									<input type="text" class="input-sm form-control" name="f5[date_end]" />
+								</div>
+							</div>
+						</div>
+						<label for="f5_title">Title</label>
+						<div class="form-group">
+							<div class="form-line">
+								<input type="text" name="f5[title]" class="form-control" required>
+							</div>
+						</div>
+						<label for="f5_report">Report To</label>
+						<div class="form-group">
+							<div class="form-line">
+								<input type="text" name="f5[report]" class="form-control" required>
+							</div>
+						</div>
+						<label for="f5_salary">Last Salary (IDR)</label>
+						<div class="form-group">
+							<div class="form-line">
+								<input type="text" name="f5[salary]" class="form-control" required>
+							</div>
+						</div>
+						<label for="f5_description">Job Description</label>
+						<div class="form-group">
+							<div class="form-line">
+								<input type="text" name="f5[description]" class="form-control" required>
+							</div>
+						</div>
+						<label for="f5_reason">Reason For Leaving</label>
+						<div class="form-group">
+							<div class="form-line">
+								<input type="text" name="f5[reason]" class="form-control" required>
+							</div>
+						</div>
+						<label for="f5_may_contact">May we contact this current/previous employer?</label>
+						<div class="form-group m-t-10">
+							<input type="radio" name="f5[may_contact]" id="f5_yes" class="with-gap" checked>
+							<label for="f5_yes">Yes</label>
+							<input type="radio" name="f5[may_contact]" id="f5_no" class="with-gap">
+							<label for="f5_no" class="m-l-20">No</label>
+						</div>
+						<label for="f5_reason_contact">If not, please explain why.<br>If yes, please provide name and contact number.</label>
+						<div class="form-group">
+							<div class="form-line">
+								<input type="text" name="f5[reason_contact]" class="form-control" required>
+							</div>
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-link bg-indigo waves-effect" data-type="fx">SAVE CHANGES</button>
+						<button type="button" class="btn btn-link waves-effect" data-dismiss="modal">CLOSE</button>
+					</div>
+					<?php echo form_close()?>
+				</div>
+			</div>
+		</div>
+	</div>
